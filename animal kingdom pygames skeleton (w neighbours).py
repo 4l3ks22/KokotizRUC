@@ -14,7 +14,7 @@ col_empty = (213, 196, 161)
 col_grid = (30, 30, 60)
 
 FRAMES_PER_SECOND = 60
-SPEED = 5
+SPEED = 60
 ID = 0  # to identify each animal uniquely (for checking correctness)
 def new_ID():
     global ID
@@ -111,8 +111,6 @@ def neighbour_fish_empty_rest(cur,neighbours):
     
     
 def neighbour_bear_empty_rest(cur,neighbours):
-    """ Given a current grid and a set of neighbouring positions, it divides the neighbours into three lists of positions: """
-    """ fish-neighbours, empty-neighbours cells and the rest"""
     # divide the neighbours into fish, empty cells and the rest
     bear_neighbours =[]
     empty_neighbours =[]
@@ -167,8 +165,10 @@ def bear_rules(cur,r,c,neighbour_bear, neighbour_empty):
         old_bear = cur[r, c]
         cur[new_pos] = old_bear
         cur[r, c] = empty() 
-     
-   
+    
+    
+    if fish
+    
      
     return cur
 
