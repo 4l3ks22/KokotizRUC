@@ -204,4 +204,3 @@ if __name__ == "__main__":
     fish = 200
     bear = 0
     main(40, 10, 16,fish,bear)
-
