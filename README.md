@@ -1,2 +1,0 @@
-# KokotizRUC
-Cellular Automata
