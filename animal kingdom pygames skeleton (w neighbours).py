@@ -32,7 +32,8 @@ def new_fish():
 # Bear initial definition
 def new_bear():
     ID_bear = new_ID()
-    bear = {'type': 'bear', 'col':col_new_bear, 'ID': ID_bear}
+    age = 0
+    bear = {'type': 'bear', 'col':col_new_bear, 'ID': ID_bear, 'age': age}
     return bear
 
 def empty():
@@ -120,7 +121,6 @@ def fish_rules(cur,r,c,neighbour_fish, neighbour_empty):
         cur[new_pos] = old_fish
         cur[r, c] = empty()
         
-    
     return cur
 
     
@@ -204,3 +204,4 @@ if __name__ == "__main__":
     fish = 200
     bear = 0
     main(40, 10, 16,fish,bear)
+
