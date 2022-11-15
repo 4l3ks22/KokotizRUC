@@ -36,6 +36,14 @@ def new_bear():
     bear = {'type': 'bear', 'col':col_new_bear, 'ID': ID_bear, 'age': age}
     return bear
 
+#Plant initial definition
+# def new_plant():
+#     ID_plant = new_ID()
+#     age = 0
+#     plant = {'type': 'plant', 'col':col_new_plant, 'ID': ID_plant, 'age': age}
+#     return plant
+
+
 def empty():
     return {'type': 'empty'}
 
@@ -90,17 +98,34 @@ def neighbour_fish_empty_rest(cur,neighbours):
     # divide the neighbours into fish, empty cells and the rest
     fish_neighbours =[]
     empty_neighbours =[]
-    bear_neighbours=[]
+    rest_neighbours=[]
     for neighbour in neighbours:
         if cur[neighbour]['type'] == "fish":
             fish_neighbours.append(neighbour)
         elif cur[neighbour]['type'] == "bear":
-            bear_neighbours.append(neighbour)
+            rest_neighbours.append(neighbour)
         else:
             empty_neighbours.append(neighbour)
 
     return fish_neighbours, empty_neighbours # we currently don't need:  bear_neighbours
     
+    
+def neighbour_bear_empty_rest(cur,neighbours):
+    """ Given a current grid and a set of neighbouring positions, it divides the neighbours into three lists of positions: """
+    """ fish-neighbours, empty-neighbours cells and the rest"""
+    # divide the neighbours into fish, empty cells and the rest
+    bear_neighbours =[]
+    empty_neighbours =[]
+    rest_neighbours=[]
+    for neighbour in neighbours:
+        if cur[neighbour]['type'] == "bear":
+            bear_neighbours.append(neighbour)
+        elif cur[neighbour]['type'] == "fish":
+            rest_neighbours.append(neighbour)
+        else:
+            empty_neighbours.append(neighbour)
+
+    return bear_neighbours, empty_neighbours
 
 
 fish_overcrowd = 2
@@ -124,9 +149,9 @@ def fish_rules(cur,r,c,neighbour_fish, neighbour_empty):
         
     return cur
   
+  
 bear_overcrowd = 2
-
-def bear_rules(cur,r,c,neighbour_fish, neighbour_empty):
+def bear_rules(cur,r,c,neighbour_bear, neighbour_empty):
     """ Given the current grid {cur}, a position (r,c) which contains a bear, and a list of grid-positions for the
     fish-neighbours  and a list of grid-positions of empty neighbour cells. Update the grid according to the fish-rules"""
     # implement the bear rules
@@ -134,7 +159,7 @@ def bear_rules(cur,r,c,neighbour_fish, neighbour_empty):
         new_pos = random.choice(neighbour_empty)
         cur[new_pos] = new_bear()   
     
-    if len(neighbour_fish) >= bear_overcrowd:
+    if len(neighbour_bear) >= bear_overcrowd:
         cur[r, c] = empty()
     
     if len(neighbour_empty) > 0:
@@ -155,7 +180,11 @@ def update(surface, cur, sz):
             
             # calculate neighbours and find the empty and the fish neighbours (other bears are not important, currently)
             neighbours = get_neighbors(cur, r, c)
+            
             neighbour_fish, neighbour_empty = neighbour_fish_empty_rest(cur, neighbours)
+            
+            neighbour_bear, neighbour_empty = neighbour_bear_empty_rest(cur, neighbours)
+            
             # For checking the state of the animal (correctness)
             print(f"Pos: ({r},{c}), Animal: {cur[r, c]}")
             # if it is a fish
@@ -164,7 +193,7 @@ def update(surface, cur, sz):
 
             # if it is a bear
             elif cur[r, c]['type'] == "bear":
-                cur = bear_rules(cur, r, c, neighbour_fish, neighbour_empty)
+                cur = bear_rules(cur, r, c, neighbour_bear, neighbour_empty)
    
    # age update
     for r, c in np.ndindex(cur.shape):
@@ -218,6 +247,6 @@ def main(dimx, dimy, cellsize,fish,bear):
 
 
 if __name__ == "__main__":
-    fish = 40
+    fish = 10
     bear = 10
     main(40, 10, 16,fish,bear)
