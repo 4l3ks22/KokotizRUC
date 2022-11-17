@@ -14,8 +14,10 @@ col_empty = (213, 196, 161)
 col_grid = (30, 30, 60)
 
 FRAMES_PER_SECOND = 60
-SPEED = 60
+SPEED = 5
 ID = 0  # to identify each animal uniquely (for checking correctness)
+overcrowd = 2
+
 def new_ID():
     global ID
     currentID = ID
@@ -109,7 +111,6 @@ def neighbour_fish_empty_rest(cur,neighbours):
 
     return fish_neighbours, empty_neighbours # we currently don't need:  bear_neighbours
     
-    
 def neighbour_bear_empty_rest(cur,neighbours):
     # divide the neighbours into fish, empty cells and the rest
     bear_neighbours =[]
@@ -126,7 +127,6 @@ def neighbour_bear_empty_rest(cur,neighbours):
     return bear_neighbours, empty_neighbours
 
 
-fish_overcrowd = 2
 
 def fish_rules(cur,r,c,neighbour_fish, neighbour_empty):
     """ Given the current grid {cur}, a position (r,c) which contains a fish, and a list of grid-positions for the
@@ -134,9 +134,9 @@ def fish_rules(cur,r,c,neighbour_fish, neighbour_empty):
     # implement the fish rules
     if cur[r, c]['age'] >= 12 and len(neighbour_empty) > 0:
         new_pos = random.choice(neighbour_empty)
-        cur[new_pos] = new_fish()   
+        cur[new_pos] = new_fish()
     
-    if len(neighbour_fish) >= fish_overcrowd:
+    if len(neighbour_fish) >= overcrowd:
         cur[r, c] = empty()
 
     elif len(neighbour_empty) > 0:
@@ -147,9 +147,8 @@ def fish_rules(cur,r,c,neighbour_fish, neighbour_empty):
         
     return cur
   
-  
-bear_overcrowd = 2
-def bear_rules(cur,r,c,neighbour_bear, neighbour_empty):
+
+def bear_rules(cur,r,c,neighbour_bear, neighbour_empty, neighbour_fish):
     """ Given the current grid {cur}, a position (r,c) which contains a bear, and a list of grid-positions for the
     fish-neighbours  and a list of grid-positions of empty neighbour cells. Update the grid according to the fish-rules"""
     # implement the bear rules
@@ -157,8 +156,13 @@ def bear_rules(cur,r,c,neighbour_bear, neighbour_empty):
         new_pos = random.choice(neighbour_empty)
         cur[new_pos] = new_bear()   
     
-    if len(neighbour_bear) >= bear_overcrowd:
+    if len(neighbour_bear) >= overcrowd:
         cur[r, c] = empty()
+    
+    if len(neighbour_fish) > 0: #making bear eat fish if fish in neighbor cells
+        cur[r, c] = empty()
+        new_pos = random.choice(neighbour_fish)
+        cur[new_pos] = new_bear()
     
     if len(neighbour_empty) > 0:
         new_pos = random.choice(neighbour_empty)
@@ -166,10 +170,6 @@ def bear_rules(cur,r,c,neighbour_bear, neighbour_empty):
         cur[new_pos] = old_bear
         cur[r, c] = empty() 
     
-    
-    if fish
-    
-     
     return cur
 
 def update(surface, cur, sz):
@@ -193,7 +193,7 @@ def update(surface, cur, sz):
 
             # if it is a bear
             elif cur[r, c]['type'] == "bear":
-                cur = bear_rules(cur, r, c, neighbour_bear, neighbour_empty)
+                cur = bear_rules(cur, r, c, neighbour_bear, neighbour_empty, neighbour_fish)
    
    # age update
     for r, c in np.ndindex(cur.shape):
@@ -230,7 +230,7 @@ def main(dimx, dimy, cellsize,fish,bear):
                 pygame.quit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                 pygame.quit()
-                
+
 
         speed_count = speed_count + 1
         surface.fill(col_grid)
@@ -247,6 +247,6 @@ def main(dimx, dimy, cellsize,fish,bear):
 
 
 if __name__ == "__main__":
-    fish = 10
-    bear = 10
+    fish = 40
+    bear = 2
     main(40, 10, 16,fish,bear)
